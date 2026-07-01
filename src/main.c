@@ -51,7 +51,7 @@ int main(void) {
       end = 1;
       break;
     case sk_0:
-      BigNum_Add(&cookie_num, 1.0);
+      BigNum_Add(&cookie_num, 0.01);
       cookie_anim.playing = 1;
       break;
     default:

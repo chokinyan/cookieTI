@@ -1,0 +1,78 @@
+# CookieTI
+
+A Cookie Clicker clone developed for the **TI-84 Plus CE** graphing calculator using the C SDK toolchain.
+
+## 🍪 Features
+
+- **Smooth Visual Animation:** Clicking the cookie triggers a scaling animation using double-buffered graphics (`libgraphx`).
+- **BigNum Engine:** Supports arbitrary sized cookie counts using a custom scientific notation floating point format (`BigNum_t` structure), handling values far beyond the range of standard integer types.
+- **Optimized Rendering:** Uses ZX0 compression to store the cookie sprite, minimizing the executable size.
+- **TI-OS Float Integration:** Leverages the native TI calculator OS floating-point routines (`os_FloatToReal` and `os_RealToStr`) to print high-precision numbers on-screen without requiring standard library formatting overhead.
+
+---
+
+## 🕹️ Controls
+
+- **`[ 0 ]`**: Click the cookie! Adds `0.01` cookies and triggers the squeeze/bounce animation.
+- **`[ Mode ]`**: Exit the application and return to the home screen safely.
+
+---
+
+## 🛠️ Compilation & Installation
+
+### Prerequisites
+You need the **CE C/C++ Toolchain** installed and added to your system path.
+- [Download CE C/C++ Toolchain](https://ce-programming.github.io/toolchain/)
+
+### Build Instructions
+Open a terminal in the root directory of this repository and run:
+
+```bash
+make
+```
+
+Upon success, this will compile the project and create the executable file in the `bin/` directory:
+- **`bin/COOKIETI.8xp`**
+
+### Transfer to Calculator
+Use **TI Connect CE** to transfer the `COOKIETI.8xp` file onto your TI-84 Plus CE.
+
+Once on the calculator, run it via the `[prgm]` menu:
+```text
+pgrmCOOKIETI
+```
+
+---
+
+## 📂 Project Architecture
+
+```
+├── bin/                       # Generated calculator program binaries (.8xp)
+├── obj/                       # Intermediate object compilation files
+├── src/
+│   ├── main.c                 # Main game loop, input handling, and rendering init
+│   ├── animation/
+│   │   ├── cookie.h           # Animation state definition (frame, delay, time)
+│   │   └── cookie.c           # Cookie scaling calculation & render function
+│   ├── data/
+│   │   ├── bigdata.h          # BigNum structure & math definitions
+│   │   └── biddata.c          # Addition, subtraction, multiplication, and OS formatting
+│   └── sprite/
+│       ├── sprite.h           # Sprite widths/heights and compressed asset references
+│       ├── global_palette.c   # Color palette for rendering
+│       └── perfectCookie.c    # Decompressed cookie sprite binary array
+├── makefile                   # CE toolchain configuration
+└── .gitignore                 # Build artifacts exclusion list
+```
+
+### Custom `BigNum` Implementation
+Because standard C integers overflow quickly on 8-bit calculators, CookieTI uses a custom exponent format:
+```c
+typedef struct {
+    double mantissa;
+    int exponent;
+} BigNum_t;
+```
+When values exceed `1e13`, they are normalized, incrementing the exponent. Numbers are formatted into the output string buffer as:
+- Simple representation if exponent is `0` (e.g. `123`)
+- Scientific representation if exponent is active (e.g. `123e+13`)

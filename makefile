@@ -2,7 +2,7 @@
 # Makefile Options
 # ----------------------------
 
-NAME = COOKIECLICK
+NAME = COOKIETI
 ICON ?= cookie.png
 DESCRIPTION = "Cookie Clicker Clone"
 COMPRESSED = YES
